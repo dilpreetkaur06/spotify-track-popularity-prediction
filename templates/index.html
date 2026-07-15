@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Predict Track Popularity{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-bars">
+    <span style="height:30%"></span><span style="height:70%"></span><span style="height:45%"></span>
+    <span style="height:90%"></span><span style="height:55%"></span><span style="height:75%"></span>
+  </div>
+
+  <div class="hero-eyebrow fade-up"><span class="dot"></span> Random Forest model &middot; R² 0.37 on held-out test data</div>
+  <h1 class="fade-up delay-1">Read a track's metadata like a <span class="grad">frequency signal</span>.</h1>
+  <p class="lead fade-up delay-2">
+    Enter a track's release details, artist stats and genre — the pipeline runs the exact same
+    feature engineering and preprocessing used in training, then scores the track's predicted
+    Spotify popularity from 0–100.
+  </p>
+</section>
+
+<div class="card card-pad fade-up delay-3">
+  <div class="section-head">
+    <div>
+      <h2>Track details</h2>
+      <p class="subtitle">All fields are required unless marked optional.</p>
+    </div>
+    <span class="eyebrow-tag">Input &middot; Validation &middot; Inference</span>
+  </div>
+
+  <form method="POST" action="{{ url_for('predict') }}" novalidate>
+    {% if errors.get('_global') %}
+    <div class="card" style="border-color: var(--danger); padding: 14px 18px; margin-bottom: 18px; color: var(--danger); font-size: 0.88rem;">
+      ⚠ {{ errors['_global'] }}
+    </div>
+    {% endif %}
+    <div class="form-grid">
+
+      <div class="field span-2">
+        <label for="track_name">Track name</label>
+        <input type="text" id="track_name" name="track_name" placeholder="e.g. Golden Hour"
+               value="{{ form_data.get('track_name', '') }}"
+               class="{{ 'error' if errors.get('track_name') }}" />
+        {% if errors.get('track_name') %}<span class="error-text">{{ errors['track_name'] }}</span>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="track_number">Track number <span class="hint">on album</span></label>
+        <input type="number" min="1" id="track_number" name="track_number" placeholder="1"
+               value="{{ form_data.get('track_number', '') }}"
+               class="{{ 'error' if errors.get('track_number') }}" />
+        {% if errors.get('track_number') %}<span class="error-text">{{ errors['track_number'] }}</span>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="track_duration_min">Duration <span class="hint">minutes</span></label>
+        <input type="number" step="0.01" min="0.1" id="track_duration_min" name="track_duration_min" placeholder="3.45"
+               value="{{ form_data.get('track_duration_min', '') }}"
+               class="{{ 'error' if errors.get('track_duration_min') }}" />
+        {% if errors.get('track_duration_min') %}<span class="error-text">{{ errors['track_duration_min'] }}</span>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="artist_popularity">Artist popularity <span class="hint">0–100</span></label>
+        <input type="number" min="0" max="100" id="artist_popularity" name="artist_popularity" placeholder="72"
+               value="{{ form_data.get('artist_popularity', '') }}"
+               class="{{ 'error' if errors.get('artist_popularity') }}" />
+        {% if errors.get('artist_popularity') %}<span class="error-text">{{ errors['artist_popularity'] }}</span>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="artist_followers">Artist followers</label>
+        <input type="number" min="0" id="artist_followers" name="artist_followers" placeholder="5400000"
+               value="{{ form_data.get('artist_followers', '') }}"
+               class="{{ 'error' if errors.get('artist_followers') }}" />
+        {% if errors.get('artist_followers') %}<span class="error-text">{{ errors['artist_followers'] }}</span>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="artist_genres">Primary genre <span class="hint">optional</span></label>
+        <input type="text" list="genre-options" id="artist_genres" name="artist_genres" placeholder="pop"
+               value="{{ form_data.get('artist_genres', '') }}" />
+        <datalist id="genre-options">
+          {% for g in genres %}<option value="{{ g }}">{% endfor %}
+        </datalist>
+      </div>
+
+      <div class="field">
+        <label for="album_release_date">Album release date</label>
+        <input type="date" id="album_release_date" name="album_release_date"
+               value="{{ form_data.get('album_release_date', '') }}"
+               class="{{ 'error' if errors.get('album_release_date') }}" />
+        {% if errors.get('album_release_date') %}<span class="error-text">{{ errors['album_release_date'] }}</span>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="album_total_tracks">Album total tracks</label>
+        <input type="number" min="1" id="album_total_tracks" name="album_total_tracks" placeholder="12"
+               value="{{ form_data.get('album_total_tracks', '') }}"
+               class="{{ 'error' if errors.get('album_total_tracks') }}" />
+        {% if errors.get('album_total_tracks') %}<span class="error-text">{{ errors['album_total_tracks'] }}</span>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="album_type">Album type</label>
+        <select id="album_type" name="album_type" class="{{ 'error' if errors.get('album_type') }}">
+          <option value="" disabled {% if not form_data.get('album_type') %}selected{% endif %}>Select type</option>
+          {% for t in album_types %}
+          <option value="{{ t }}" {% if form_data.get('album_type') == t %}selected{% endif %}>{{ t|capitalize }}</option>
+          {% endfor %}
+        </select>
+        {% if errors.get('album_type') %}<span class="error-text">{{ errors['album_type'] }}</span>{% endif %}
+      </div>
+
+      <div class="field">
+        <label>&nbsp;</label>
+        <div class="checkbox-row">
+          <input type="checkbox" id="explicit" name="explicit" {% if form_data.get('explicit') == 'on' %}checked{% endif %} />
+          <label for="explicit" style="font-weight:500;">Explicit content</label>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 26px; display:flex; gap:12px; flex-wrap:wrap;">
+      <button type="submit" class="btn btn-primary">Predict popularity</button>
+      <a href="{{ url_for('metrics') }}" class="btn btn-ghost">View model metrics</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

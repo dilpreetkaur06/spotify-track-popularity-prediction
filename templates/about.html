@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}About this project{% endblock %}
+
+{% block content %}
+<section class="hero" style="padding-top:24px; padding-bottom:8px;">
+  <div class="hero-eyebrow fade-up"><span class="dot"></span> MLOps portfolio project</div>
+  <h1 class="fade-up delay-1">About <span class="grad">Spotify Track Popularity Prediction</span>.</h1>
+  <p class="lead fade-up delay-2">
+    A production-style, end-to-end machine learning system that predicts a track's Spotify
+    popularity score (0–100) from its release metadata, artist statistics and genre — built to
+    demonstrate modular software engineering, reproducible ML pipelines and MLOps best practices.
+  </p>
+</section>
+
+<div class="grid grid-2 fade-up delay-2" style="margin-bottom:24px;">
+  <div class="card card-pad">
+    <h2>What it predicts</h2>
+    <p>
+      Given a track's number on its album, duration, explicit flag, artist popularity &amp;
+      follower count, genre, album release date, album size and album type, the model estimates
+      Spotify's <code>track_popularity</code> metric — a 0–100 score reflecting how much a track
+      is currently being played relative to all other tracks on the platform.
+    </p>
+  </div>
+  <div class="card card-pad">
+    <h2>Why it's useful</h2>
+    <p>
+      Labels, managers and independent artists can use popularity-driver insights (release
+      timing, artist reach, genre positioning) to inform release strategy — while engineers can
+      study this repository as a template for building modular, testable ML systems end-to-end.
+    </p>
+  </div>
+</div>
+
+<div class="card card-pad fade-up delay-3" style="margin-bottom:24px;">
+  <div class="section-head">
+    <div>
+      <h2>Pipeline architecture</h2>
+      <p class="subtitle">Every stage is an independently executable, OOP component under <code>src/</code>.</p>
+    </div>
+  </div>
+  <div class="flow">
+    <span class="flow-step">Data Ingestion</span><span class="flow-arrow">→</span>
+    <span class="flow-step">Data Validation</span><span class="flow-arrow">→</span>
+    <span class="flow-step">Feature Engineering</span><span class="flow-arrow">→</span>
+    <span class="flow-step">Data Transformation</span><span class="flow-arrow">→</span>
+    <span class="flow-step">Model Training</span><span class="flow-arrow">→</span>
+    <span class="flow-step">Model Evaluation</span><span class="flow-arrow">→</span>
+    <span class="flow-step">Prediction Pipeline</span><span class="flow-arrow">→</span>
+    <span class="flow-step">Flask App</span>
+  </div>
+</div>
+
+<div class="card card-pad fade-up delay-3">
+  <div class="section-head">
+    <div>
+      <h2>Technology stack</h2>
+    </div>
+  </div>
+  <div class="tag-list">
+    <span class="tag">Python 3.10</span>
+    <span class="tag">Pandas / NumPy</span>
+    <span class="tag">scikit-learn</span>
+    <span class="tag">XGBoost</span>
+    <span class="tag">CatBoost</span>
+    <span class="tag">LightGBM</span>
+    <span class="tag">MLflow</span>
+    <span class="tag">DVC</span>
+    <span class="tag">Flask</span>
+    <span class="tag">Docker</span>
+    <span class="tag">GitHub Actions</span>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python -m src.spotify_popularity.components.data_ingestion
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: 2ba0c3c4f58db73c11a16eaa07fec989
+      size: 2346
+    - path: data/raw/track_data_final.csv
+      hash: md5
+      md5: f31a6ed9cd0fafe5fd8eb6b7926cfa73
+      size: 1407766
+    - path: src/spotify_popularity/components/data_ingestion.py
+      hash: md5
+      md5: 331f6209be0c07ed050efc8483aeb612
+      size: 4871
+    outs:
+    - path: artifacts/data_ingestion/test.csv
+      hash: md5
+      md5: b57621228340feb54441ee6333a14096
+      size: 282025
+    - path: artifacts/data_ingestion/train.csv
+      hash: md5
+      md5: 800b222d85d487e46c2fb00e3614c4f7
+      size: 1125948
+  data_validation:
+    cmd: python -m src.spotify_popularity.components.data_validation
+    deps:
+    - path: artifacts/data_ingestion/test.csv
+      hash: md5
+      md5: b57621228340feb54441ee6333a14096
+      size: 282025
+    - path: artifacts/data_ingestion/train.csv
+      hash: md5
+      md5: 800b222d85d487e46c2fb00e3614c4f7
+      size: 1125948
+    - path: config/config.yaml
+      hash: md5
+      md5: 2ba0c3c4f58db73c11a16eaa07fec989
+      size: 2346
+    - path: src/spotify_popularity/components/data_validation.py
+      hash: md5
+      md5: a502a8a7509f843b9f29d0365076feb8
+      size: 4877
+    outs:
+    - path: artifacts/data_validation/validation_report.json
+      hash: md5
+      md5: 2ae4027b1e84ebff8de9e2b8e7f60ca9
+      size: 1260
+  data_transformation:
+    cmd: python -m src.spotify_popularity.components.data_transformation
+    deps:
+    - path: artifacts/data_ingestion/test.csv
+      hash: md5
+      md5: b57621228340feb54441ee6333a14096
+      size: 282025
+    - path: artifacts/data_ingestion/train.csv
+      hash: md5
+      md5: 800b222d85d487e46c2fb00e3614c4f7
+      size: 1125948
+    - path: config/config.yaml
+      hash: md5
+      md5: 2ba0c3c4f58db73c11a16eaa07fec989
+      size: 2346
+    - path: src/spotify_popularity/components/data_transformation.py
+      hash: md5
+      md5: aa20673ad3cbd56f072f1529d7dff87d
+      size: 7668
+    - path: src/spotify_popularity/components/feature_engineering.py
+      hash: md5
+      md5: d5c2b89f6c7de9a92608492bc9fa7cb8
+      size: 6457
+    outs:
+    - path: artifacts/data_transformation/preprocessor.joblib
+      hash: md5
+      md5: 620533a8706087588dd38ca2b0754479
+      size: 7264
+    - path: artifacts/data_transformation/test_transformed.csv
+      hash: md5
+      md5: a7adaf237eaaa24da82563ee5483f541
+      size: 535387
+    - path: artifacts/data_transformation/train_transformed.csv
+      hash: md5
+      md5: 3b781de0c1351e9ebafcce57fb7ae9f5
+      size: 2138097
+  model_training:
+    cmd: python -m src.spotify_popularity.components.model_trainer
+    deps:
+    - path: artifacts/data_transformation/test_transformed.csv
+      hash: md5
+      md5: a7adaf237eaaa24da82563ee5483f541
+      size: 535387
+    - path: artifacts/data_transformation/train_transformed.csv
+      hash: md5
+      md5: 3b781de0c1351e9ebafcce57fb7ae9f5
+      size: 2138097
+    - path: config/params.yaml
+      hash: md5
+      md5: 5348c88d681a71f765434f27d5f3437f
+      size: 1253
+    - path: src/spotify_popularity/components/model_trainer.py
+      hash: md5
+      md5: 10a8d5ed2e4bff56aeb822340ff163e2
+      size: 6733
+    outs:
+    - path: artifacts/model/best_model.joblib
+      hash: md5
+      md5: 9ce228e91e4db5f511aeb1cf6c726450
+      size: 41881681
+    - path: artifacts/model/training_report.json
+      hash: md5
+      md5: be2d011ec1efd09d78054c60a3d099f2
+      size: 1193
+  model_evaluation:
+    cmd: python -m src.spotify_popularity.components.model_evaluation
+    deps:
+    - path: artifacts/data_transformation/test_transformed.csv
+      hash: md5
+      md5: a7adaf237eaaa24da82563ee5483f541
+      size: 535387
+    - path: artifacts/model/best_model.joblib
+      hash: md5
+      md5: 9ce228e91e4db5f511aeb1cf6c726450
+      size: 41881681
+    - path: src/spotify_popularity/components/model_evaluation.py
+      hash: md5
+      md5: 90a28492a04a658591e72a45f9143ca0
+      size: 3997
+    outs:
+    - path: artifacts/metrics/feature_importance.json
+      hash: md5
+      md5: 095d37cb0195085e5c9e90a4be157a09
+      size: 1865
+    - path: artifacts/metrics/metrics.json
+      hash: md5
+      md5: d3f2cb39a5e02c312a237e361590e5d9
+      size: 204

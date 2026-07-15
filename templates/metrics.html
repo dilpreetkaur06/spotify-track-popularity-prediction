@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Model Metrics{% endblock %}
+
+{% block content %}
+<section class="hero" style="padding-top:24px; padding-bottom:8px;">
+  <div class="hero-eyebrow fade-up"><span class="dot"></span> Best model &middot; {{ best_model }}</div>
+  <h1 class="fade-up delay-1">Model <span class="grad">performance</span> dashboard.</h1>
+  <p class="lead fade-up delay-2">
+    Six regression models were trained on the transformed dataset. The model with the highest
+    R² Score on the held-out test set was automatically selected and persisted for inference.
+  </p>
+</section>
+
+<div class="grid grid-4 fade-up delay-2" style="margin-bottom: 24px;">
+  <div class="card stat-card">
+    <div class="stat-label">R² Score</div>
+    <div class="stat-value accent">{{ "%.4f"|format(metrics.get('r2_score', 0)) }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-label">MAE</div>
+    <div class="stat-value">{{ "%.2f"|format(metrics.get('mae', 0)) }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-label">RMSE</div>
+    <div class="stat-value">{{ "%.2f"|format(metrics.get('rmse', 0)) }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-label">Test samples</div>
+    <div class="stat-value">{{ metrics.get('n_test_samples', 'N/A') }}</div>
+  </div>
+</div>
+
+<div class="card card-pad fade-up delay-3" style="margin-bottom: 24px;">
+  <div class="section-head">
+    <div>
+      <h2>Model comparison</h2>
+      <p class="subtitle">All candidates were trained with identical preprocessing; ranked by R² Score.</p>
+    </div>
+    <span class="eyebrow-tag">Regression &middot; 5-fold ready</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>R² Score</th>
+          <th>MAE</th>
+          <th>RMSE</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for name, m in all_models.items()|sort(attribute='1.r2_score', reverse=True) %}
+        <tr class="{{ 'best-row' if name == best_model }}">
+          <td>{{ name }}</td>
+          <td>{{ "%.4f"|format(m.r2_score) }}</td>
+          <td>{{ "%.3f"|format(m.mae) }}</td>
+          <td>{{ "%.3f"|format(m.rmse) }}</td>
+          <td>{% if name == best_model %}<span class="badge badge-best">★ Best</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card card-pad fade-up delay-3">
+  <div class="section-head">
+    <div>
+      <h2>Feature importance</h2>
+      <p class="subtitle">Top drivers of predicted popularity, according to the selected model.</p>
+    </div>
+    <span class="eyebrow-tag">Top 10</span>
+  </div>
+
+  <div class="bar-chart">
+    {% set max_val = feature_importance.values()|list|first if feature_importance else 1 %}
+    {% for name, value in feature_importance.items() %}
+    <div class="bar-row">
+      <div class="bar-name" title="{{ name }}">{{ name.replace('numeric__', '').replace('categorical__', '') }}</div>
+      <div class="bar-track">
+        <div class="bar-fill" data-value="{{ (value / max_val * 100) if max_val else 0 }}"></div>
+      </div>
+      <div class="bar-value">{{ "%.3f"|format(value) }}</div>
+    </div>
+    {% else %}
+    <p class="subtitle">Feature importance is not available for this model type.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

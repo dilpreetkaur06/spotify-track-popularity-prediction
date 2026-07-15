@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Prediction Result{% endblock %}
+
+{% block content %}
+<div class="card card-pad fade-up">
+  <div class="section-head">
+    <div>
+      <h2>Predicted popularity</h2>
+      <p class="subtitle">"{{ result.track_name }}" &middot; {{ result.album_type }} &middot; {{ result.artist_genres }}</p>
+    </div>
+    <span class="eyebrow-tag">{{ result.timestamp }}</span>
+  </div>
+
+  <div class="meter-wrap">
+    <div class="meter-score-label">Popularity score</div>
+    <div class="meter-score">{{ result.predicted_popularity }}</div>
+
+    <div class="meter-track">
+      <div class="meter-fill" data-value="{{ result.predicted_popularity }}"></div>
+    </div>
+    <div class="meter-scale">
+      <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+    </div>
+
+    <p class="meter-verdict">
+      {% if result.predicted_popularity >= 75 %}
+        🔥 This track profile matches patterns of <strong>chart-topping</strong> tracks.
+      {% elif result.predicted_popularity >= 50 %}
+        📈 This track profile suggests <strong>solid mainstream</strong> potential.
+      {% elif result.predicted_popularity >= 25 %}
+        🎧 This track profile suggests a <strong>niche / building</strong> audience.
+      {% else %}
+        🌱 This track profile resembles <strong>early-stage or deep-catalog</strong> tracks.
+      {% endif %}
+    </p>
+  </div>
+
+  <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Predict another track</a>
+    <a href="{{ url_for('history') }}" class="btn btn-ghost">View prediction history</a>
+  </div>
+</div>
+{% endblock %}

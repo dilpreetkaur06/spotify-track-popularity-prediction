@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Spotify Track Popularity Prediction{% endblock %}</title>
+  <meta name="description" content="Predict a track's Spotify popularity score from its metadata using a production ML pipeline." />
+
+  <!-- Inline script to set the theme BEFORE first paint (avoids flash of wrong theme) -->
+  <script>
+    (function () {
+      var stored = localStorage.getItem("spotify-popularity-theme");
+      var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", stored || (prefersDark ? "dark" : "light"));
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="app-shell">
+    <nav class="navbar">
+      <div class="navbar-inner">
+        <a href="{{ url_for('index') }}" class="brand">
+          <span class="brand-mark"><span></span><span></span><span></span><span></span></span>
+          Popularity<span class="mono">.io</span>
+        </a>
+
+        <div class="nav-links">
+          <a href="{{ url_for('index') }}" class="nav-link {% if active_page == 'home' %}active{% endif %}">Predict</a>
+          <a href="{{ url_for('metrics') }}" class="nav-link {% if active_page == 'metrics' %}active{% endif %}">Model Metrics</a>
+          <a href="{{ url_for('history') }}" class="nav-link {% if active_page == 'history' %}active{% endif %}">History</a>
+          <a href="{{ url_for('about') }}" class="nav-link {% if active_page == 'about' %}active{% endif %}">About</a>
+
+          <div class="theme-toggle">
+            <button id="theme-switch" class="switch" aria-label="Toggle dark and light theme"></button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="page-body">
+      <div class="page-container">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="page-container footer-inner">
+        <span>© 2026 Spotify Track Popularity Prediction &middot; Built for portfolio &amp; educational use</span>
+        <span class="mono">v1.0.0</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

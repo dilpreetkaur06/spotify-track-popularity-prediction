@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Prediction History{% endblock %}
+
+{% block content %}
+<section class="hero" style="padding-top:24px; padding-bottom:8px;">
+  <div class="hero-eyebrow fade-up"><span class="dot"></span> Stored locally &middot; {{ records|length }} predictions</div>
+  <h1 class="fade-up delay-1">Prediction <span class="grad">history</span>.</h1>
+  <p class="lead fade-up delay-2">Every prediction made through this dashboard is logged locally to <code>artifacts/predictions/prediction_history.json</code>.</p>
+</section>
+
+<div class="card fade-up delay-2">
+  <div class="section-head" style="padding: 24px 24px 0;">
+    <div>
+      <h2>Recent predictions</h2>
+      <p class="subtitle">Most recent first &middot; last 200 kept</p>
+    </div>
+    {% if records %}
+    <form method="POST" action="{{ url_for('clear_history') }}" onsubmit="return confirm('Clear all prediction history?');">
+      <button type="submit" class="btn btn-danger">Clear history</button>
+    </form>
+    {% endif %}
+  </div>
+
+  {% if records %}
+    <div style="padding: 8px 8px 8px;">
+      {% for r in records %}
+      <div class="history-row">
+        <div>
+          <div class="history-track">{{ r.track_name }}</div>
+          <div class="history-meta">{{ r.artist_genres }} &middot; {{ r.album_type }} &middot; {{ r.timestamp }}</div>
+        </div>
+        <div class="history-score">{{ r.predicted_popularity }}</div>
+        <div></div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="icon-bars">
+        <span style="height:30%"></span><span style="height:70%"></span><span style="height:45%"></span>
+        <span style="height:90%"></span><span style="height:55%"></span>
+      </div>
+      <p>No predictions yet. Head to the <a href="{{ url_for('index') }}" style="text-decoration:underline;">predict page</a> to get started.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

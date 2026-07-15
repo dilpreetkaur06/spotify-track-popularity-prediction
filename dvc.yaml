@@ -1,0 +1,67 @@
+# =============================================================================
+# dvc.yaml
+# -----------------------------------------------------------------------------
+# Defines the ML pipeline as a DAG of reproducible stages. Running
+#     dvc repro
+# re-executes only the stages whose dependencies (code or data) changed,
+# and versions every generated artifact alongside the code that produced it.
+# =============================================================================
+
+stages:
+  data_ingestion:
+    cmd: python -m src.spotify_popularity.components.data_ingestion
+    deps:
+      - data/raw/track_data_final.csv
+      - src/spotify_popularity/components/data_ingestion.py
+      - config/config.yaml
+    outs:
+      - artifacts/data_ingestion/train.csv
+      - artifacts/data_ingestion/test.csv
+
+  data_validation:
+    cmd: python -m src.spotify_popularity.components.data_validation
+    deps:
+      - artifacts/data_ingestion/train.csv
+      - artifacts/data_ingestion/test.csv
+      - src/spotify_popularity/components/data_validation.py
+      - config/config.yaml
+    outs:
+      - artifacts/data_validation/validation_report.json
+
+  data_transformation:
+    cmd: python -m src.spotify_popularity.components.data_transformation
+    deps:
+      - artifacts/data_ingestion/train.csv
+      - artifacts/data_ingestion/test.csv
+      - src/spotify_popularity/components/data_transformation.py
+      - src/spotify_popularity/components/feature_engineering.py
+      - config/config.yaml
+    outs:
+      - artifacts/data_transformation/train_transformed.csv
+      - artifacts/data_transformation/test_transformed.csv
+      - artifacts/data_transformation/preprocessor.joblib
+
+  model_training:
+    cmd: python -m src.spotify_popularity.components.model_trainer
+    deps:
+      - artifacts/data_transformation/train_transformed.csv
+      - artifacts/data_transformation/test_transformed.csv
+      - src/spotify_popularity/components/model_trainer.py
+      - config/params.yaml
+    outs:
+      - artifacts/model/best_model.joblib
+    metrics:
+      - artifacts/model/training_report.json:
+          cache: false
+
+  model_evaluation:
+    cmd: python -m src.spotify_popularity.components.model_evaluation
+    deps:
+      - artifacts/model/best_model.joblib
+      - artifacts/data_transformation/test_transformed.csv
+      - src/spotify_popularity/components/model_evaluation.py
+    metrics:
+      - artifacts/metrics/metrics.json:
+          cache: false
+    outs:
+      - artifacts/metrics/feature_importance.json

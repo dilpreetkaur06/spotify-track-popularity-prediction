@@ -1,0 +1,73 @@
+# ============================================================================
+# config.yaml
+# ----------------------------------------------------------------------------
+# Single source of truth for every file path used across the pipeline.
+# Nothing in src/ hard-codes a path - everything is read from this file
+# through src/spotify_popularity/config/configuration.py
+# ============================================================================
+
+artifacts_root: artifacts
+
+data_ingestion:
+  root_dir: artifacts/data_ingestion
+  source_dir: data/raw                    # persistent, version-controlled raw data (see DVC)
+  source_files:
+    - data/raw/track_data_final.csv
+  ingested_file: artifacts/data_ingestion/track_data_final.csv
+  train_file: artifacts/data_ingestion/train.csv
+  test_file: artifacts/data_ingestion/test.csv
+  test_size: 0.2
+  random_state: 42
+
+data_validation:
+  root_dir: artifacts/data_validation
+  status_file: artifacts/data_validation/validation_status.json
+  report_file: artifacts/data_validation/validation_report.json
+  required_columns:
+    - track_id
+    - track_name
+    - track_number
+    - track_popularity
+    - track_duration_ms
+    - explicit
+    - artist_name
+    - artist_popularity
+    - artist_followers
+    - artist_genres
+    - album_id
+    - album_name
+    - album_release_date
+    - album_total_tracks
+    - album_type
+
+data_transformation:
+  root_dir: artifacts/data_transformation
+  transformed_train_file: artifacts/data_transformation/train_transformed.csv
+  transformed_test_file: artifacts/data_transformation/test_transformed.csv
+  preprocessor_file: artifacts/data_transformation/preprocessor.joblib
+
+feature_engineering:
+  root_dir: artifacts/feature_engineering
+  top_n_genres: 15
+
+model_trainer:
+  root_dir: artifacts/model
+  trained_model_file: artifacts/model/best_model.joblib
+  model_registry_dir: artifacts/model/registry
+  target_column: track_popularity
+
+model_evaluation:
+  root_dir: artifacts/metrics
+  metrics_file: artifacts/metrics/metrics.json
+  feature_importance_file: artifacts/metrics/feature_importance.json
+  all_models_report_file: artifacts/metrics/all_models_report.json
+
+prediction:
+  history_file: artifacts/predictions/prediction_history.json
+
+mlflow:
+  tracking_uri: "sqlite:///mlflow.db"
+  experiment_name: "spotify_track_popularity"
+
+logs:
+  dir: logs
