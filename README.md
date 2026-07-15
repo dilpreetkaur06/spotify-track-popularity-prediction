@@ -1,4 +1,4 @@
-# 🎧 Spotify Track Popularity Prediction
+# Spotify Track Popularity Prediction
 
 An end-to-end, production-style **Machine Learning system** that predicts a Spotify track's
 `track_popularity` score (0–100) from its metadata — release date, artist stats, genre,
@@ -9,7 +9,7 @@ experiment tracking (MLflow), dataset versioning (DVC), automated CI, and a poli
 
 ---
 
-## 📖 Table of Contents
+## Table of Contents
 
 - [Project Overview](#-project-overview)
 - [Architecture Diagram](#-architecture-diagram)
@@ -29,7 +29,7 @@ experiment tracking (MLflow), dataset versioning (DVC), automated CI, and a poli
 
 ---
 
-## 🚀 Project Overview
+## Project Overview
 
 Spotify's `track_popularity` field is one of the most requested-but-elusive metrics for
 artists, labels and data scientists to predict. This project builds a full ML system —
@@ -48,7 +48,7 @@ not just a notebook — around that target:
 
 ---
 
-## 🏗 Architecture Diagram
+## Architecture Diagram
 
 ```
                      ┌────────────────────────┐
@@ -92,7 +92,7 @@ not just a notebook — around that target:
 
 ---
 
-## 📊 Dataset Description
+## Dataset Description
 
 The raw dataset (`data/raw/track_data_final.csv`) is a **merged and de-duplicated**
 combination of two Spotify metadata exports (`spotify_data clean.csv` and
@@ -119,7 +119,7 @@ combination of two Spotify metadata exports (`spotify_data clean.csv` and
 
 ---
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```
 spotify-track-popularity/
@@ -165,7 +165,7 @@ spotify-track-popularity/
 
 ---
 
-## ⚙️ Installation Steps
+## Installation Steps
 
 **Prerequisites:** Python 3.10+, pip, (optionally) Docker & DVC.
 
@@ -187,7 +187,7 @@ dvc pull
 
 ---
 
-## ▶️ Running Locally
+## Running Locally
 
 **1. Train the model** (runs Ingestion → Validation → Transformation → Training → Evaluation):
 
@@ -225,7 +225,7 @@ mlflow ui --backend-store-uri sqlite:///mlflow.db
 
 ---
 
-## 🐳 Docker Instructions
+## Docker Instructions
 
 ```bash
 # Build the image
@@ -241,7 +241,7 @@ docker run -p 5000:5000 spotify-popularity:latest
 
 ---
 
-## 🔬 ML Pipeline Explanation
+## ML Pipeline Explanation
 
 | Stage | Module | Responsibility |
 |---|---|---|
@@ -259,7 +259,7 @@ scaling** required by the project spec lives inside stages 3–4 above, driven e
 
 ---
 
-## 📈 Model Performance
+## Model Performance
 
 Automatically selected best model: **RandomForestRegressor**
 
@@ -278,7 +278,7 @@ numbers, also displayed live on the app's **Model Metrics** page.)*
 
 ---
 
-## 🌐 Web Application
+## Web Application
 
 The Flask app (`app.py`) is a thin presentational layer over the prediction pipeline, with:
 
@@ -294,7 +294,7 @@ CSS animations, and a cohesive dashboard design system (`static/css/style.css`).
 
 ---
 
-## 🖼 Screenshots
+## Screenshots
 
 > _Add screenshots after running the app locally:_
 
@@ -304,7 +304,7 @@ CSS animations, and a cohesive dashboard design system (`static/css/style.css`).
 
 ---
 
-## 🛠 Technologies Used
+## Technologies Used
 
 **ML / Data:** pandas, NumPy, scikit-learn, XGBoost, CatBoost, LightGBM
 **MLOps:** MLflow (experiment tracking), DVC (data & pipeline versioning)
@@ -315,7 +315,7 @@ CSS animations, and a cohesive dashboard design system (`static/css/style.css`).
 
 ---
 
-## 🔮 Future Improvements
+## Future Improvements
 
 - Hyperparameter tuning via Optuna / GridSearchCV, tracked in MLflow.
 - Audio-feature enrichment (danceability, energy, tempo) via the Spotify Web API.
@@ -326,14 +326,4 @@ CSS animations, and a cohesive dashboard design system (`static/css/style.css`).
 
 ---
 
-## 👤 Author
-
-**Your Name**
-Machine Learning Engineer
-[GitHub](https://github.com/<your-username>) · [LinkedIn](https://linkedin.com/in/<your-profile>)
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
+[GitHub](https://github.com/<dilpreetkaur06>) · [LinkedIn](www.linkedin.com/in/dilpreet-kaur2004/)
